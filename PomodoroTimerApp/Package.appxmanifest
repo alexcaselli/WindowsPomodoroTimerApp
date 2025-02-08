@@ -5,18 +5,21 @@
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
-  IgnorableNamespaces="uap rescap">
+  xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+  IgnorableNamespaces="uap rescap com desktop uap3">
 
   <Identity
     Name="f71b1270-ab32-4b07-afc4-55ecb47c3818"
-    Publisher="CN=acase"
-    Version="1.0.0.0" />
+    Publisher="CN=Alex Caselli"
+    Version="1.0.21.0" />
 
   <mp:PhoneIdentity PhoneProductId="f71b1270-ab32-4b07-afc4-55ecb47c3818" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>PomodoroTimerApp</DisplayName>
-    <PublisherDisplayName>acase</PublisherDisplayName>
+    <PublisherDisplayName>AlexCaselli</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
@@ -39,13 +42,36 @@
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"  ShortName="PomodoroTimerApp_Icon" Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png">
+        </uap:DefaultTile >
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
+        <uap:InitialRotationPreference>
+          <uap:Rotation Preference="landscape"/></uap:InitialRotationPreference>
+        <uap:LockScreen BadgeLogo="Assets\BadgeLogo.png" Notification="badge"/>
       </uap:VisualElements>
+		<Extensions>
+
+			<!--Specify which CLSID to activate when toast clicked-->
+			<desktop:Extension Category="windows.toastNotificationActivation">
+				<desktop:ToastNotificationActivation ToastActivatorCLSID="E5EB868C-B33C-403C-932C-236F8C0B25E8" />
+			</desktop:Extension>
+
+			<!--Register COM CLSID LocalServer32 registry key-->
+			<com:Extension Category="windows.comServer">
+				<com:ComServer>
+					<com:ExeServer Executable="PomodoroTimerApp.exe" Arguments="-ToastActivated" DisplayName="App notification activator">
+						<com:Class Id="E5EB868C-B33C-403C-932C-236F8C0B25E8" DisplayName="App notification activator"/>
+					</com:ExeServer>
+				</com:ComServer>
+			</com:Extension>
+
+
+		</Extensions>
     </Application>
   </Applications>
 
   <Capabilities>
     <rescap:Capability Name="runFullTrust" />
+    <uap3:Capability Name="userNotificationListener"/>
   </Capabilities>
 </Package>
