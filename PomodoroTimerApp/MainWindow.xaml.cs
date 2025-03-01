@@ -55,7 +55,7 @@ namespace PomodoroTimerApp
         private bool _isBreakActive = false;
 
         // Costanti di configurazione
-        private const int WorkingTimerDurationMinutes = 1;
+        private const double WorkingTimerDurationMinutes = 25;
         private const int BreakTimerDurationMinutes = 3;
         private const int InactivityThresholdSeconds = 15;
         private const int BreakInactivityThresholdSeconds = 10;
@@ -70,6 +70,8 @@ namespace PomodoroTimerApp
             this.InitializeComponent();
             InitializeTimers();
             windowHelper = new WindowHelper();
+            this.AppWindow.SetIcon("Assets/Square44x44Logo.targetsize-32.png");
+            //this.AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
         }
 
         /// <summary>
@@ -186,7 +188,7 @@ namespace PomodoroTimerApp
             // Visualizza una notifica toast per avvisare l'utente che il timer è scaduto.
             ShowToastNotification();
 
-            //EnsureAppInForeground();
+            EnsureAppInForeground();
             windowHelper.LaunchAndBringToForegroundIfNeeded(this);
 
             // Attende un breve ritardo per permettere l'aggiornamento dell'interfaccia
@@ -480,10 +482,17 @@ namespace PomodoroTimerApp
 
             try
             {
-                // Ensure the app has permission to send toast notifications
-                ToastNotificationManagerCompat.History.Clear();
-
-                debugTextBlock.Text = debugTextBlock.Text + ", Hystory Cleared";
+                debugTextBlock.Text = debugTextBlock.Text + ", Notification Status: " + ToastNotificationManager.CreateToastNotifier().Setting;
+                //// Ensure the app has permission to send toast notifications
+                //ToastNotificationHistoryCompat historyCompat = ToastNotificationManagerCompat.History;
+                //debugTextBlock.Text = debugTextBlock.Text + ", Got history";
+                //if ( ToastNotificationManagerCompat.History.GetHistory().Count > 0)
+                //{
+                //    debugTextBlock.Text = debugTextBlock.Text + ", There is history";
+                //    ToastNotificationManagerCompat.History.Clear();
+                //    debugTextBlock.Text = debugTextBlock.Text + ", History Cleared";
+                //}
+                
 
                 // Crea il contenuto della notifica toast, includendo un parametro di attivazione.
                 var content = new ToastContentBuilder()
@@ -497,6 +506,7 @@ namespace PomodoroTimerApp
 
                 // Crea la notifica e inviala
                 var toast = new ToastNotification(content.GetXml());
+
                 ToastNotificationManager.CreateToastNotifier().Show(toast);
 
                 debugTextBlock.Text = debugTextBlock.Text + ", Toast Sent";
