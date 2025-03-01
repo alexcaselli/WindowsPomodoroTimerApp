@@ -4,14 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 
-namespace PomodoroTimerApp.PomodoroTimer
+namespace PomodoroTimerApp.PomodoroTimer.States
 {
     abstract class State
     {
         protected PomodoroTimer _timer;
 
-        public State (PomodoroTimer pomodoroTimer)
+        public State(PomodoroTimer pomodoroTimer)
         {
             _timer = pomodoroTimer;
         }
@@ -19,6 +20,6 @@ namespace PomodoroTimerApp.PomodoroTimer
         public abstract void Stop();
         public abstract void Pause();
         public abstract void Resume();
-        public abstract void Reset();
+        public abstract void Elapsed(object? sender, ElapsedEventArgs e);
     }
 }

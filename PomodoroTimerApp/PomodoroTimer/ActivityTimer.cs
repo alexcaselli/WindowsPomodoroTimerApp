@@ -15,6 +15,31 @@ namespace PomodoroTimerApp.PomodoroTimer
     {
         public ActivityTimer(double timerDurationMinutes, TextBlock timerTextBlock, Button primaryButton, Button stopButton) : base(timerDurationMinutes, timerTextBlock, primaryButton, stopButton) { }
 
+        public override void ClickPause()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ClickReset()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ClickResume()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ClickStop()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Elapsed()
+        {
+            throw new NotImplementedException();
+        }
+
         public override void Pause()
         {
             throw new NotImplementedException();
@@ -26,6 +51,11 @@ namespace PomodoroTimerApp.PomodoroTimer
         }
 
         public override void Resume()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Start()
         {
             throw new NotImplementedException();
         }
