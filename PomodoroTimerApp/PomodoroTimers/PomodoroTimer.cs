@@ -6,13 +6,15 @@ using System.Threading.Tasks;
 using System.Timers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using PomodoroTimerApp.PomodoroTimer.States;
+using PomodoroTimerApp.PomodoroTimers.States;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Controls;
 using PomodoroTimerApp.Helpers;
+using PomodoroTimerApp.PomodoroTimers.Events;
 
-namespace PomodoroTimerApp.PomodoroTimer
+namespace PomodoroTimerApp.PomodoroTimers
 {
+
     internal abstract class PomodoroTimer
     {
         protected State _state;
@@ -33,9 +35,12 @@ namespace PomodoroTimerApp.PomodoroTimer
         protected const string ButtonContent_Start = "Start Timer";
         protected DispatcherQueue _dispatcherQueue;
 
-        //Windowing
+        // Windowing
         protected Window _mainWindow;
         protected WindowHelper _windowHelper;
+
+        // Events
+        public event EventHandler<TimerCompletedEventArgs> TimerCompleted;
 
         public PomodoroTimer(double timerDurationMinutes, Window mainWindow, TextBlock timerTextBlock, Button primaryButton, Button stopButton)
         {
@@ -101,6 +106,12 @@ namespace PomodoroTimerApp.PomodoroTimer
             StartActivityTracker();
         }
         public abstract void Elapsed();
+
+        // Metodo protetto per sollevare l'evento di completamento
+        protected virtual void OnTimerCompleted(TimerCompletedEventArgs e)
+        {
+            TimerCompleted?.Invoke(this, e);
+        }
 
 
 

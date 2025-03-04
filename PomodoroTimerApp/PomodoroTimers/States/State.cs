@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 
-namespace PomodoroTimerApp.PomodoroTimer.States
+namespace PomodoroTimerApp.PomodoroTimers.States
 {
     abstract class State
     {

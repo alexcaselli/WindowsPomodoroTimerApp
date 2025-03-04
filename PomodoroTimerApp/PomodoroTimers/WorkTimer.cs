@@ -12,7 +12,7 @@ using Microsoft.UI.Xaml.Controls;
 using PomodoroTimerApp.Helpers;
 using Windows.UI.Notifications;
 
-namespace PomodoroTimerApp.PomodoroTimer
+namespace PomodoroTimerApp.PomodoroTimers
 {
     internal class WorkTimer : PomodoroTimer
     {
@@ -72,17 +72,20 @@ namespace PomodoroTimerApp.PomodoroTimer
             this.Init();
         }
 
-        private async void HandleWorkTimerCompletion()
+        private void HandleWorkTimerCompletion()
         {
-
             // Visualizza una notifica toast per avvisare l'utente che il timer è scaduto.
             ShowToastNotification();
 
             _mainWindow = _windowHelper.LaunchAndBringToForegroundIfNeeded(_mainWindow);
             _windowHelper.EnterFullScreen(_mainWindow);
 
-            StartBreakTimer();
+            // Invoke the TimerCompleted event from the base class
+            var args = new TimerCompletedEventArgs { TimerType = "Work" };
+            OnTimerCompleted(args);
         }
+
+
         #region Notifiche Toast
 
         /// <summary>

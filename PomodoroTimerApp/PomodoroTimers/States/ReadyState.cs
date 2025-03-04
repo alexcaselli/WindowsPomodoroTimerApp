@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 
-namespace PomodoroTimerApp.PomodoroTimer.States
+namespace PomodoroTimerApp.PomodoroTimers.States
 {
     internal class ReadyState : State
     {

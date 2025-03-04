@@ -20,6 +20,8 @@ using Windows.UI.Notifications;
 
 using PomodoroTimerApp.Helpers;
 using Microsoft.Windows.AppNotifications.Builder;
+using PomodoroTimerApp.PomodoroTimers;
+using PomodoroTimerApp.PomodoroTimers.Events;
 
 
 namespace PomodoroTimerApp
@@ -62,17 +64,62 @@ namespace PomodoroTimerApp
 
         private WindowHelper windowHelper;
 
+        private PomodoroTimer _currentTimer;
+
 
         #endregion
 
         public MainWindow()
         {
             this.InitializeComponent();
-            InitializeTimers();
+            //InitializeTimers(); ----------------------------------- UNCOMMENT THIS LINE
+            CoordinateTimers();
             windowHelper = new WindowHelper();
             this.AppWindow.SetIcon("Assets/Square44x44Logo.targetsize-32.png");
             //this.AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
         }
+
+        private void CoordinateTimers()
+        {
+            // Inizializza i timer e lo stato iniziale.
+            _currentTimer = new WorkTimer(WorkingTimerDurationMinutes, this, timerTextBlock, primaryButton, stopButton);
+            _currentTimer.TimerCompleted += OnTimerElapsed;
+        }
+
+        private void OnTimerElapsed(object? sender, TimerCompletedEventArgs e)
+        {
+            if (e.TimerType == "Work")
+            {
+                // Avvia il timer di pausa appropriato
+                StartBreakTimer();
+            }
+            else if (e.TimerType == "Break")
+            {
+                // Dopo una pausa, avvia un nuovo timer di lavoro
+                StartWorkTimer();
+            }
+        }
+        private void StartWorkTimer()
+        {
+            // Disconnetti l'evento dal timer precedente se esiste
+            if (_currentTimer != null)
+            {
+                _currentTimer.TimerCompleted -= OnTimerElapsed;
+            }
+
+            // Crea un nuovo timer di lavoro
+            _currentTimer = new WorkTimer(_workDurationMinutes, _mainWindow, _timerTextBlock, _primaryButton, _stopButton);
+
+            // Sottoscrivi all'evento TimerCompleted
+            _currentTimer.TimerCompleted += Timer_Completed;
+
+            // Configura i pulsanti per controllare il timer
+            ConfigureButtonsForTimer();
+
+            // Avvia il timer
+            _currentTimer.Start();
+        }
+
 
         /// <summary>
         /// Inizializza i timer e lo stato iniziale.

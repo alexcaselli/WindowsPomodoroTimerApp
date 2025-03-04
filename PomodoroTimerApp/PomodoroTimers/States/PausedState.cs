@@ -5,34 +5,35 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 
-namespace PomodoroTimerApp.PomodoroTimer.States
+namespace PomodoroTimerApp.PomodoroTimers.States
 {
-    internal class RunningState : State
+    internal class PausedState : State
     {
-        public RunningState(PomodoroTimer pomodoroTimer) : base(pomodoroTimer)
+        public PausedState(PomodoroTimer pomodoroTimer) : base(pomodoroTimer)
         {
         }
 
         public override void Elapsed(object? sender, ElapsedEventArgs e)
         {
-            _timer.Elapsed();
-            _timer.ChangeState(new ReadyState(_timer));
+            // Do nothing
         }
 
         public override void Pause()
         {
-            _timer.Pause();
-            _timer.ChangeState(new PausedState(_timer));
+            // Do nothing
         }
 
         public override void Resume()
         {
-            // Do nothing
+            _timer.Resume();
+            _timer.ChangeState(new RunningState(_timer));
         }
+
         public override void Start()
         {
             // Do nothing
         }
+
         public override void Stop()
         {
             _timer.Stop();
