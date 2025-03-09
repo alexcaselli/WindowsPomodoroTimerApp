@@ -22,6 +22,7 @@ using PomodoroTimerApp.Helpers;
 using Microsoft.Windows.AppNotifications.Builder;
 using PomodoroTimerApp.PomodoroTimers;
 using PomodoroTimerApp.PomodoroTimers.Events;
+using System.ComponentModel.Design;
 
 
 namespace PomodoroTimerApp
@@ -57,12 +58,12 @@ namespace PomodoroTimerApp
         private bool _isBreakActive = false;
 
         // Costanti di configurazione
-        private const double WorkingTimerDurationMinutes = 25;
+        private const double WorkingTimerDurationMinutes = 1;
         private const int BreakTimerDurationMinutes = 3;
         private const int InactivityThresholdSeconds = 15;
         private const int BreakInactivityThresholdSeconds = 10;
 
-        private WindowHelper windowHelper;
+        private WindowHelper _windowHelper;
 
         private PomodoroTimer _currentTimer;
 
@@ -74,7 +75,7 @@ namespace PomodoroTimerApp
             this.InitializeComponent();
             //InitializeTimers(); ----------------------------------- UNCOMMENT THIS LINE
             CoordinateTimers();
-            windowHelper = new WindowHelper();
+            _windowHelper = new WindowHelper();
             this.AppWindow.SetIcon("Assets/Square44x44Logo.targetsize-32.png");
             //this.AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
         }
@@ -82,7 +83,7 @@ namespace PomodoroTimerApp
         private void CoordinateTimers()
         {
             // Inizializza i timer e lo stato iniziale.
-            _currentTimer = new WorkTimer(WorkingTimerDurationMinutes, this, timerTextBlock, primaryButton, stopButton);
+            _currentTimer = new WorkTimer(WorkingTimerDurationMinutes, timerTextBlock, primaryButton, stopButton);
             _currentTimer.TimerCompleted += OnTimerElapsed;
         }
 
@@ -90,16 +91,22 @@ namespace PomodoroTimerApp
         {
             if (e.TimerType == "Work")
             {
+                // Visualizza una notifica toast per avvisare l'utente che il timer è scaduto.
+                ShowToastNotification();
+
+                Window _mainWindow = _windowHelper.LaunchAndBringToForegroundIfNeeded(this);
+                _windowHelper.EnterFullScreen(_mainWindow);
+
                 // Avvia il timer di pausa appropriato
-                StartBreakTimer();
+                StartPomodoroTimer("Break");
             }
             else if (e.TimerType == "Break")
             {
                 // Dopo una pausa, avvia un nuovo timer di lavoro
-                StartWorkTimer();
+                StartPomodoroTimer("Work");
             }
         }
-        private void StartWorkTimer()
+        private void StartPomodoroTimer(String TimerType)
         {
             // Disconnetti l'evento dal timer precedente se esiste
             if (_currentTimer != null)
@@ -108,16 +115,26 @@ namespace PomodoroTimerApp
             }
 
             // Crea un nuovo timer di lavoro
-            _currentTimer = new WorkTimer(_workDurationMinutes, _mainWindow, _timerTextBlock, _primaryButton, _stopButton);
+            switch (TimerType)
+            {
+                case "Work":
+                    _currentTimer = new WorkTimer(WorkingTimerDurationMinutes, timerTextBlock, primaryButton, stopButton);
+                    break;
+                case "Break":
+                    _currentTimer = new BreakTimer(BreakTimerDurationMinutes, timerTextBlock, primaryButton, stopButton);
+                    break;
+                default:
+                    throw new ArgumentException("Invalid timer type");
+            }
 
             // Sottoscrivi all'evento TimerCompleted
-            _currentTimer.TimerCompleted += Timer_Completed;
+            _currentTimer.TimerCompleted += OnTimerElapsed;
 
-            // Configura i pulsanti per controllare il timer
-            ConfigureButtonsForTimer();
+            //// Configura i pulsanti per controllare il timer
+            //ConfigureButtonsForTimer();
 
             // Avvia il timer
-            _currentTimer.Start();
+            _currentTimer.ClickStartPauseResume();
         }
 
 
@@ -148,51 +165,14 @@ namespace PomodoroTimerApp
 
         #region Eventi UI
 
-        private void MyButton_Click(object sender, RoutedEventArgs e)
+        private void PrimaryButton_Click(object sender, RoutedEventArgs e)
         {
-            if (_workingTimer.Enabled)
-            {
-                // Se il timer principale è in esecuzione, gestiamo la pausa.
-                if (_isPaused || _pausedByInactivity)
-                {
-                    // Riprendi il timer solo se era in pausa manuale.
-                    if (_isPaused)
-                    {
-                        _endTime = DateTime.Now.Add(_remainingTime);
-                        _workingTimer.Start();
-                        _isPaused = false;
-                        myButton.Content = "Pause Timer";
-                    }
-                    // Se è in pausa per inattività, il ripristino avverrà automaticamente
-                }
-                else
-                {
-                    // Pausa manuale del timer principale
-                    _workingTimer.Stop();
-                    _remainingTime = _endTime - DateTime.Now;
-                    _isPaused = true;
-                    myButton.Content = "Resume Timer";
-                }
-            }
-            else
-            {
-                // Avvia il timer principale (se era fermo)
-                _endTime = DateTime.Now.Add(_remainingTime);
-                _workingTimer.Start();
-                myButton.Content = "Pause Timer";
-                stopButton.IsEnabled = true;
-                _inactivityTimer.Start();
-            }
+            _currentTimer.ClickStartPauseResume();
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
-            StopWorkingTimerAndReset();
-            // Se il break era in corso, fermalo
-            if (_breakTimer != null)
-            {
-                _breakTimer.Stop();
-            }
+            _currentTimer.Stop();
             // Esce dalla modalità fullscreen se attivo
             ExitFullScreen();
         }
@@ -211,7 +191,7 @@ namespace PomodoroTimerApp
                 DispatcherQueue.TryEnqueue(() =>
                 {
                     timerTextBlock.Text = "00:00";
-                    myButton.IsEnabled = false;
+                    primaryButton.IsEnabled = false;
                     stopButton.IsEnabled = false;
                     _inactivityDuration = TimeSpan.Zero;
                     // Gestione della fine del timer e avvio del break
@@ -236,14 +216,14 @@ namespace PomodoroTimerApp
             ShowToastNotification();
 
             EnsureAppInForeground();
-            windowHelper.LaunchAndBringToForegroundIfNeeded(this);
+            _windowHelper.LaunchAndBringToForegroundIfNeeded(this);
 
             // Attende un breve ritardo per permettere l'aggiornamento dell'interfaccia
             await Task.Delay(300);
 
             // Entra in modalità fullscreen se l'utente clicca la notifica (vedi gestione attivazione)
             // Oppure, si può impostare la logica per entrare in fullscreen direttamente
-            windowHelper.EnterFullScreen(this);
+            _windowHelper.EnterFullScreen(this);
 
             StartBreakTimer();
         }
@@ -256,7 +236,7 @@ namespace PomodoroTimerApp
             _workingTimer.Stop();
             _remainingTime = TimeSpan.FromMinutes(WorkingTimerDurationMinutes);
             timerTextBlock.Text = _remainingTime.ToString(@"mm\:ss");
-            myButton.Content = "Start Timer";
+            primaryButton.Content = "Start Timer";
             stopButton.IsEnabled = false;
             _isPaused = false;
             _pausedByInactivity = false;
@@ -305,14 +285,14 @@ namespace PomodoroTimerApp
                     // Reset del timer principale e aggiornamento dell'interfaccia
                     _remainingTime = TimeSpan.FromMinutes(WorkingTimerDurationMinutes);
                     timerTextBlock.Text = _remainingTime.ToString(@"mm\:ss");
-                    myButton.Content = "Start Timer";
-                    myButton.IsEnabled = true;
+                    primaryButton.Content = "Start Timer";
+                    primaryButton.IsEnabled = true;
                     stopButton.IsEnabled = false;
 
                     // Riavvia il timer principale
                     _endTime = DateTime.Now.Add(_remainingTime);
                     _workingTimer.Start();
-                    myButton.Content = "Pause Timer";
+                    primaryButton.Content = "Pause Timer";
                     stopButton.IsEnabled = true;
                     _inactivityTimer.Start();
                     // Non è necessario riaggiungere l'handler del Tick del cronometro d'inattività.
@@ -389,7 +369,7 @@ namespace PomodoroTimerApp
                     _inactivityDuration = TimeSpan.Zero;
                     _inactivityStopwatchTimer.Start();
                     inactivityTimerTextBlock.Visibility = Visibility.Visible;
-                    myButton.Content = "Resume Timer (inactivity)";
+                    primaryButton.Content = "Resume Timer (inactivity)";
                 });
             }
             else if (_pausedByInactivity && idleTime < TimeSpan.FromSeconds(InactivityThresholdSeconds))
@@ -400,7 +380,7 @@ namespace PomodoroTimerApp
                     _workingTimer.Start();
                     _pausedByInactivity = false;
                     _inactivityStopwatchTimer.Stop();
-                    myButton.Content = "Pause Timer";
+                    primaryButton.Content = "Pause Timer";
                 });
             }
         }

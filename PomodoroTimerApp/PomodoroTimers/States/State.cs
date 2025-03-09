@@ -16,10 +16,8 @@ namespace PomodoroTimerApp.PomodoroTimers.States
         {
             _timer = pomodoroTimer;
         }
-        public abstract void Start();
+        public abstract void StartPauseResume();
         public abstract void Stop();
-        public abstract void Pause();
-        public abstract void Resume();
-        public abstract void Elapsed(object? sender, ElapsedEventArgs e);
+        public abstract void Completed();
     }
 }

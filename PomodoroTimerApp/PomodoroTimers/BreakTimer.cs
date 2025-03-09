@@ -10,21 +10,12 @@ namespace PomodoroTimerApp.PomodoroTimers
 {
     internal class BreakTimer : PomodoroTimer
     {
-        public BreakTimer(double timerDurationMinutes, Window mainWindow, TextBlock timerTextBlock, Button primaryButton, Button stopButton) : base(timerDurationMinutes, mainWindow, timerTextBlock, primaryButton, stopButton)
+        public BreakTimer(double timerDurationMinutes, TextBlock timerTextBlock, Button primaryButton, Button stopButton) : base(timerDurationMinutes, timerTextBlock, primaryButton, stopButton)
         {
         }
 
-        public override void Elapsed()
-        {
-            throw new NotImplementedException();
-        }
 
-        public override void Pause()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Resume()
+        public override void HandleTimerCompletion()
         {
             throw new NotImplementedException();
         }
@@ -34,9 +25,5 @@ namespace PomodoroTimerApp.PomodoroTimers
             throw new NotImplementedException();
         }
 
-        public override void Stop()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

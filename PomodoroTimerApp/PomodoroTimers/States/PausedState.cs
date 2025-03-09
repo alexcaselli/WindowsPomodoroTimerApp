@@ -13,25 +13,16 @@ namespace PomodoroTimerApp.PomodoroTimers.States
         {
         }
 
-        public override void Elapsed(object? sender, ElapsedEventArgs e)
+        public override void Completed()
         {
             // Do nothing
         }
 
-        public override void Pause()
-        {
-            // Do nothing
-        }
 
-        public override void Resume()
+        public override void StartPauseResume()
         {
             _timer.Resume();
             _timer.ChangeState(new RunningState(_timer));
-        }
-
-        public override void Start()
-        {
-            // Do nothing
         }
 
         public override void Stop()

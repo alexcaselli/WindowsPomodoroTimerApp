@@ -35,26 +35,24 @@ namespace PomodoroTimerApp.PomodoroTimers
         protected const string ButtonContent_Start = "Start Timer";
         protected DispatcherQueue _dispatcherQueue;
 
-        // Windowing
-        protected Window _mainWindow;
-        protected WindowHelper _windowHelper;
-
         // Events
         public event EventHandler<TimerCompletedEventArgs> TimerCompleted;
 
-        public PomodoroTimer(double timerDurationMinutes, Window mainWindow, TextBlock timerTextBlock, Button primaryButton, Button stopButton)
+        //Debug
+        private IOHelper _ioHelper;
+
+        public PomodoroTimer(double timerDurationMinutes, TextBlock timerTextBlock, Button primaryButton, Button stopButton)
         {
             _timerDurationMinutes = timerDurationMinutes;
             _timerTextBlock = timerTextBlock;
             _primaryButton = primaryButton;
             _stopButton = stopButton;
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-            _mainWindow = mainWindow;
-            _windowHelper = new WindowHelper();
+            _ioHelper = new IOHelper();
 
             // Timer (ogni 1 secondo)
             _timer = new Timer(1000);
-            _timer.Elapsed += OnTimerElapsed;
+            _timer.Elapsed += Elapsed;
             this.Init();
             this.ChangeState(new ReadyState(this));
         }
@@ -72,40 +70,66 @@ namespace PomodoroTimerApp.PomodoroTimers
 
         }
 
-        public void ClickStart()
+        public void ClickStartPauseResume()
         {
-            _timer.Start();
+            _state.StartPauseResume();
         }
 
         public void ClickStop(){
             _state.Stop();
         }
-        public void ClickPause()
-        {
-            _state.Pause();
-        }
-        public void ClickResume()
-        {
-            _state.Resume();
-        }
-        public abstract void StartActivityTracker();
-        protected void OnTimerElapsed(object? sender, ElapsedEventArgs e)
-        {
-            _state.Elapsed(sender, e);
-        }
 
-        public abstract void Pause();
-        public abstract void Resume();
-        public abstract void Stop();
+        public abstract void StartActivityTracker();
+        //protected void OnTimerElapsed(object? sender, ElapsedEventArgs e)
+        //{
+        //    _state.Elapsed(sender, e);
+        //}
+
+        public void Pause()
+        {
+            _timer.Stop();
+            _remainingTime = _endTime - DateTime.Now;
+            _primaryButton.Content = ButtonContent_Resume;
+        }
+        public void Resume()
+        {
+            this.Start();
+        }
+        public void Stop()
+        {
+            _timer.Stop();
+            this.Init();
+        }
         public void Start()
         {
             _endTime = DateTime.Now.Add(_remainingTime);
             _timer.Start();
             _primaryButton.Content = "Pause Timer";
             _stopButton.IsEnabled = true;
-            StartActivityTracker();
+            //StartActivityTracker();
         }
-        public abstract void Elapsed();
+        public void Elapsed(object? sender, ElapsedEventArgs e)
+        {
+            _remainingTime = _endTime - DateTime.Now;
+            if (_remainingTime <= TimeSpan.Zero)
+            {
+                _timer.Stop();
+                _remainingTime = TimeSpan.Zero;
+                _dispatcherQueue.TryEnqueue(() =>
+                {
+                    _timerTextBlock.Text = ZeroTime;
+                    // Gestione della fine del timer e avvio del break
+                    _state.Completed();
+                });
+                return;
+            }
+
+            // Aggiornamento dell’interfaccia
+            _dispatcherQueue.TryEnqueue(() =>
+                _timerTextBlock.Text = _remainingTime.ToString(TimerFormat));
+        }
+
+        public abstract void HandleTimerCompletion();
 
         // Metodo protetto per sollevare l'evento di completamento
         protected virtual void OnTimerCompleted(TimerCompletedEventArgs e)
