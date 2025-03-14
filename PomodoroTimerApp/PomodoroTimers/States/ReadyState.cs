@@ -17,7 +17,14 @@ namespace PomodoroTimerApp.PomodoroTimers.States
         {
             // Do nothing
         }
-
+        public override bool ActivityPause()
+        {
+            return false;
+        }
+        public override bool ActivityResume()
+        {
+            return false;
+        }
 
         public override void StartPauseResume()
         {

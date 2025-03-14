@@ -33,6 +33,7 @@ namespace PomodoroTimerApp.PomodoroTimers
         protected Button _stopButton;
         protected const string ButtonContent_Resume = "Resume Timer";
         protected const string ButtonContent_Start = "Start Timer";
+        protected const string ButtonContent_Pause = "Pause Timer";
         protected DispatcherQueue _dispatcherQueue;
 
         // Events
@@ -75,6 +76,16 @@ namespace PomodoroTimerApp.PomodoroTimers
             _state.StartPauseResume();
         }
 
+        public bool ClickActivityPause()
+        {
+            return _state.ActivityPause();
+        }
+
+        public bool ClickActivityResume()
+        {
+            return _state.ActivityResume();
+        }
+
         public void ClickStop(){
             _state.Stop();
         }
@@ -89,7 +100,10 @@ namespace PomodoroTimerApp.PomodoroTimers
         {
             _timer.Stop();
             _remainingTime = _endTime - DateTime.Now;
-            _primaryButton.Content = ButtonContent_Resume;
+            _dispatcherQueue.TryEnqueue(() =>
+            {
+                _primaryButton.Content = ButtonContent_Resume;
+            });
         }
         public void Resume()
         {
@@ -104,8 +118,12 @@ namespace PomodoroTimerApp.PomodoroTimers
         {
             _endTime = DateTime.Now.Add(_remainingTime);
             _timer.Start();
-            _primaryButton.Content = "Pause Timer";
-            _stopButton.IsEnabled = true;
+            _dispatcherQueue.TryEnqueue(() =>
+            {
+                _primaryButton.Content = ButtonContent_Pause;
+                _stopButton.IsEnabled = true;
+            });
+            
             //StartActivityTracker();
         }
         public void Elapsed(object? sender, ElapsedEventArgs e)

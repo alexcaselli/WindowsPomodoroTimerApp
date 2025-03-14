@@ -20,6 +20,18 @@ namespace PomodoroTimerApp.PomodoroTimers.States
             
         }
 
+        public override bool ActivityPause()
+        {
+            _timer.Pause();
+            _timer.ChangeState(new PausedState(_timer));
+            return true;
+        }
+
+        public override bool ActivityResume()
+        {
+            return false;
+        }
+
 
         public override void StartPauseResume()
         {

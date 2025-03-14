@@ -19,5 +19,7 @@ namespace PomodoroTimerApp.PomodoroTimers.States
         public abstract void StartPauseResume();
         public abstract void Stop();
         public abstract void Completed();
+        public abstract bool ActivityPause();
+        public abstract bool ActivityResume();
     }
 }

@@ -23,6 +23,7 @@ using Microsoft.Windows.AppNotifications.Builder;
 using PomodoroTimerApp.PomodoroTimers;
 using PomodoroTimerApp.PomodoroTimers.Events;
 using System.ComponentModel.Design;
+using PomodoroTimerApp.Managers;
 
 
 namespace PomodoroTimerApp
@@ -85,6 +86,7 @@ namespace PomodoroTimerApp
             // Inizializza i timer e lo stato iniziale.
             _currentTimer = new WorkTimer(WorkingTimerDurationMinutes, timerTextBlock, primaryButton, stopButton);
             _currentTimer.TimerCompleted += OnTimerElapsed;
+            UserActivityPomodoroTimerManager userActivityPomodoroTimerManager = new UserActivityPomodoroTimerManager(_currentTimer);
         }
 
         private void OnTimerElapsed(object? sender, TimerCompletedEventArgs e)
