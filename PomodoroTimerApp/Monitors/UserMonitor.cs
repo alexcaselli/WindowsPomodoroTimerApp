@@ -1,19 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using PomodoroTimerApp.Managers;
 
-namespace PomodoroTimerApp.Managers
+namespace PomodoroTimerApp.Monitors
 {
-    public class UserActivityMonitor
+    public abstract class UserMonitor
     {
-        private List<IActivityObserver> _observers = new List<IActivityObserver>();
-        private static readonly TimeSpan WorkInactivityThreshold = TimeSpan.FromSeconds(15);
-        private System.Timers.Timer _activityCheckTimer;
+        protected List<IActivityObserver> _observers = new List<IActivityObserver>();
+        protected static readonly TimeSpan WorkInactivityThreshold = TimeSpan.FromSeconds(15);
+        protected static readonly TimeSpan BreakActivityThreshold = TimeSpan.FromSeconds(10);
 
-        public UserActivityMonitor()
+        protected System.Timers.Timer _activityCheckTimer;
+
+        public UserMonitor()
         {
 
             // Controllo periodico dell'attività
@@ -21,9 +25,9 @@ namespace PomodoroTimerApp.Managers
         }
 
 
-        private void ScheduleActivityCheck()
+        protected void ScheduleActivityCheck()
         {
-            _activityCheckTimer = new System.Timers.Timer(1000); 
+            _activityCheckTimer = new System.Timers.Timer(1000);
             _activityCheckTimer.Elapsed += (sender, e) => CheckActivity();
             _activityCheckTimer.AutoReset = true;
             _activityCheckTimer.Start();
@@ -41,7 +45,7 @@ namespace PomodoroTimerApp.Managers
 
 
 
-        private TimeSpan GetInactivityDuration()
+        protected TimeSpan GetInactivityDuration()
         {
             var lastInputInfo = new LASTINPUTINFO
             {
@@ -53,7 +57,7 @@ namespace PomodoroTimerApp.Managers
                 return TimeSpan.Zero;
             }
 
-            uint idleTimeMillis = ((uint)Environment.TickCount - lastInputInfo.dwTime);
+            uint idleTimeMillis = (uint)Environment.TickCount - lastInputInfo.dwTime;
             return TimeSpan.FromMilliseconds(idleTimeMillis);
         }
         //public void UpdateActivity()
@@ -68,22 +72,11 @@ namespace PomodoroTimerApp.Managers
         //    }
         //}
 
-        private void CheckActivity()
-        {
+        protected abstract void CheckActivity();
 
-            TimeSpan _inactivityDuration = GetInactivityDuration();
 
-            if (_inactivityDuration > WorkInactivityThreshold)
-            {
-                NotifyUserInactive();
-            }
-            else
-            {
-                NotifyUserActive();
-            }
-        }
 
-        private void NotifyUserActive()
+        protected void NotifyUserActive()
         {
             foreach (var observer in _observers)
             {
@@ -91,7 +84,7 @@ namespace PomodoroTimerApp.Managers
             }
         }
 
-        private void NotifyUserInactive()
+        protected void NotifyUserInactive()
         {
             foreach (var observer in _observers)
             {
@@ -102,14 +95,15 @@ namespace PomodoroTimerApp.Managers
         #region Inattività tramite Win32 API
 
         [StructLayout(LayoutKind.Sequential)]
-        private struct LASTINPUTINFO
+        protected struct LASTINPUTINFO
         {
             public uint cbSize;
             public uint dwTime;
         }
 
         [DllImport("user32.dll")]
-        private static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
+        protected static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
         #endregion
     }
 }
+

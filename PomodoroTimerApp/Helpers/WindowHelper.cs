@@ -170,6 +170,12 @@ namespace PomodoroTimerApp.Helpers
             appWindow.SetPresenter(AppWindowPresenterKind.FullScreen);
         }
 
+        public void ExitFullScreen(Window m_window)
+        {
+            AppWindow appWindow = GetAppWindow(m_window);
+            appWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
+        }
+
 
 
     }

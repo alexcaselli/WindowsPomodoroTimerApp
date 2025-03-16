@@ -60,13 +60,14 @@ namespace PomodoroTimerApp
 
         // Costanti di configurazione
         private const double WorkingTimerDurationMinutes = 1;
-        private const int BreakTimerDurationMinutes = 3;
+        private const double BreakTimerDurationMinutes = 1;
         private const int InactivityThresholdSeconds = 15;
         private const int BreakInactivityThresholdSeconds = 10;
 
         private WindowHelper _windowHelper;
 
         private PomodoroTimer _currentTimer;
+        private UserActivityPomodoroTimerManager _userActivityPomodoroTimerManager;
 
 
         #endregion
@@ -85,8 +86,9 @@ namespace PomodoroTimerApp
         {
             // Inizializza i timer e lo stato iniziale.
             _currentTimer = new WorkTimer(WorkingTimerDurationMinutes, timerTextBlock, primaryButton, stopButton);
+            _userActivityPomodoroTimerManager = new UserActivityWorkTimerManager(_currentTimer, inactivityTimerTextBlock);
             _currentTimer.TimerCompleted += OnTimerElapsed;
-            UserActivityPomodoroTimerManager userActivityPomodoroTimerManager = new UserActivityPomodoroTimerManager(_currentTimer);
+            
         }
 
         private void OnTimerElapsed(object? sender, TimerCompletedEventArgs e)
@@ -105,6 +107,7 @@ namespace PomodoroTimerApp
             else if (e.TimerType == "Break")
             {
                 // Dopo una pausa, avvia un nuovo timer di lavoro
+                _windowHelper.ExitFullScreen(this);
                 StartPomodoroTimer("Work");
             }
         }
@@ -121,9 +124,11 @@ namespace PomodoroTimerApp
             {
                 case "Work":
                     _currentTimer = new WorkTimer(WorkingTimerDurationMinutes, timerTextBlock, primaryButton, stopButton);
+                    _userActivityPomodoroTimerManager = new UserActivityWorkTimerManager(_currentTimer, inactivityTimerTextBlock);
                     break;
                 case "Break":
                     _currentTimer = new BreakTimer(BreakTimerDurationMinutes, timerTextBlock, primaryButton, stopButton);
+                    _userActivityPomodoroTimerManager = new UserActivityBreakTimerManager(_currentTimer, inactivityTimerTextBlock);
                     break;
                 default:
                     throw new ArgumentException("Invalid timer type");
@@ -176,7 +181,7 @@ namespace PomodoroTimerApp
         {
             _currentTimer.Stop();
             // Esce dalla modalità fullscreen se attivo
-            ExitFullScreen();
+            _windowHelper.ExitFullScreen(this);
         }
 
         #endregion

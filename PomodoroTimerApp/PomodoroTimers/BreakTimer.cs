@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using PomodoroTimerApp.PomodoroTimers.Events;
 
 namespace PomodoroTimerApp.PomodoroTimers
 {
@@ -17,7 +18,9 @@ namespace PomodoroTimerApp.PomodoroTimers
 
         public override void HandleTimerCompletion()
         {
-            throw new NotImplementedException();
+            // Invoke the TimerCompleted event from the base class
+            var args = new TimerCompletedEventArgs { TimerType = "Break" };
+            OnTimerCompleted(args);
         }
 
         public override void StartActivityTracker()
