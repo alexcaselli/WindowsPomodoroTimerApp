@@ -11,7 +11,7 @@
 
     <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
         <TextBlock x:Name="debugTextBlock" FontSize="18" Margin="10" HorizontalAlignment="Center" Foreground="Red" Visibility="Collapsed"/>
-        <TextBlock x:Name="inactivityTimerTextBlock" FontSize="24" Margin="10" HorizontalAlignment="Center" Foreground="Green" Visibility="Collapsed"/>
+        <TextBlock x:Name="inactivityStopwatchTextBlock" FontSize="24" Margin="10" HorizontalAlignment="Center" Foreground="Green" Visibility="Collapsed"/>
         <TextBlock x:Name="timerTextBlock" FontSize="48" Margin="10" HorizontalAlignment="Center"/>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
