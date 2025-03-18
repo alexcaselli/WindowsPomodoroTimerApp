@@ -11,11 +11,11 @@
 
     <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
         <TextBlock x:Name="debugTextBlock" FontSize="18" Margin="10" HorizontalAlignment="Center" Foreground="Red" Visibility="Collapsed"/>
-        <TextBlock x:Name="inactivityTimerTextBlock" FontSize="24" Margin="10" HorizontalAlignment="Center" Foreground="Green" Visibility="Collapsed"/>
+        <TextBlock x:Name="inactivityStopwatchTextBlock" FontSize="24" Margin="10" HorizontalAlignment="Center" Foreground="Green" Visibility="Collapsed"/>
         <TextBlock x:Name="timerTextBlock" FontSize="48" Margin="10" HorizontalAlignment="Center"/>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Button x:Name="myButton" Margin="10" Click="MyButton_Click">Start Timer</Button>
+            <Button x:Name="primaryButton" Margin="10" Click="PrimaryButton_Click">Start Timer</Button>
             <Button x:Name="stopButton" Content="Stop Timer" Click="StopButton_Click" IsEnabled="False"/>
         </StackPanel>
     </StackPanel>

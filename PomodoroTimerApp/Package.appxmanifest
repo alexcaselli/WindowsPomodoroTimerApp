@@ -11,9 +11,9 @@
   IgnorableNamespaces="uap rescap com desktop uap3">
 
   <Identity
-    Name="f71b1270-ab32-4b07-afc4-55ecb47c3818"
+    Name="PomodoAppTimer"
     Publisher="CN=Alex Caselli"
-    Version="1.0.21.0" />
+    Version="1.0.49.0" />
 
   <mp:PhoneIdentity PhoneProductId="f71b1270-ab32-4b07-afc4-55ecb47c3818" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 

@@ -41,17 +41,6 @@ namespace PomodoroTimerApp
             this.InitializeComponent();
             IOHelper.CreateFile();
 
-
-            //// Listen to notification activation
-            //ToastNotificationManagerCompat.OnActivated += toastArgs =>
-            //{
-            //    // Obtain the arguments from the notification
-            //    ToastArguments args = ToastArguments.Parse(toastArgs.Argument);
-
-            //    // print the arguments to the console
-            //    Console.WriteLine(args["action"]);
-
-            //};
         }
 
 
@@ -89,7 +78,6 @@ namespace PomodoroTimerApp
 
         private void ToastNotificationManagerCompat_OnActivated(ToastNotificationActivatedEventArgsCompat e)
         {
-            // Use the dispatcher from the window if present, otherwise the app dispatcher
             var dispatcherQueue = m_window?.DispatcherQueue ?? App.DispatcherQueue;
 
             Debug.WriteLine("DEBUG ------------- Toast Notification Callback Received.");
@@ -100,14 +88,9 @@ namespace PomodoroTimerApp
 
                 switch (args["action"])
                 {
-                    // View a message
                     case "openWindow":
-
-                        // Launch/bring window to foreground
                         m_window = windowHelper.LaunchAndBringToForegroundIfNeeded(m_window);
                         windowHelper.EnterFullScreen(m_window);
-
-                        // TODO: Open the message
                         break;
                 }
             });
