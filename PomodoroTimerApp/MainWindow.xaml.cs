@@ -35,34 +35,10 @@ namespace PomodoroTimerApp
     {
         #region Campi e costanti
 
-        // Timers
-        private Timer _workingTimer;
-        private Timer _inactivityTimer;
-        private Timer _breakTimer;
-        private DispatcherTimer _inactivityStopwatchTimer;
-
-        // Tempo
-        private DateTime _endTime;
-        private TimeSpan _remainingTime;
-
-        // Timer per il break
-        private DateTime _breakEndTime;
-        private TimeSpan _breakRemainingTime;
-
-        // Stato del timer
-        private bool _isPaused;               // Pausa manuale del timer principale
-        private bool _pausedByInactivity;     // Pausa a causa dell’inattività
-        private TimeSpan _inactivityDuration; // Durata dell’inattività
-
-        // Timer break: gestione pausa per attività
-        private bool _breakPausedByActivity = false;
-        private bool _isBreakActive = false;
-
         // Costanti di configurazione
-        private const double WorkingTimerDurationMinutes = 1;
-        private const double BreakTimerDurationMinutes = 1;
-        private const int InactivityThresholdSeconds = 15;
-        private const int BreakInactivityThresholdSeconds = 10;
+        private const double WorkingTimerDurationMinutes = 25;
+        private const double BreakTimerDurationMinutes = 3;
+
 
         private WindowHelper _windowHelper;
 
