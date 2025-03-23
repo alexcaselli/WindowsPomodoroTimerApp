@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Graphics;
 
 // Namespace per la gestione del fullscreen
 using WinRT.Interop;
@@ -24,6 +25,8 @@ using PomodoroTimerApp.PomodoroTimers;
 using PomodoroTimerApp.PomodoroTimers.Events;
 using System.ComponentModel.Design;
 using PomodoroTimerApp.Managers;
+using System.IO;
+using Microsoft.UI.Composition.SystemBackdrops;
 
 
 namespace PomodoroTimerApp
@@ -38,12 +41,16 @@ namespace PomodoroTimerApp
         // Costanti di configurazione
         private const double WorkingTimerDurationMinutes = 25;
         private const double BreakTimerDurationMinutes = 3;
+        private SizeInt32 WindowSize = new SizeInt32(720, 480);
 
 
         private WindowHelper _windowHelper;
 
         private PomodoroTimer _currentTimer;
         private UserActivityPomodoroTimerManager _userActivityPomodoroTimerManager;
+
+        private MicaController micaController;
+        private SystemBackdropConfiguration backdropConfiguration;
 
 
         #endregion
@@ -54,7 +61,9 @@ namespace PomodoroTimerApp
             //InitializeTimers(); ----------------------------------- UNCOMMENT THIS LINE
             CoordinateTimers();
             _windowHelper = new WindowHelper();
-            this.AppWindow.SetIcon("Assets/Square44x44Logo.targetsize-32.png");
+            //this.AppWindow.SetIcon("Assets/Square44x44Logo.targetsize-32.png");
+            AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets\\Square44x44Logo.targetsize-32.png"));
+            AppWindow.Resize(WindowSize);
             //this.AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
         }
 

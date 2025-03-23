@@ -9,17 +9,26 @@
     mc:Ignorable="d"
     Title="PomodoroTimerApp">
 
+    <Window.SystemBackdrop>
+        <MicaBackdrop/>
+    </Window.SystemBackdrop>
+
     <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
         <TextBlock x:Name="debugTextBlock" FontSize="18" Margin="10" HorizontalAlignment="Center" Foreground="Red" Visibility="Collapsed"/>
         <TextBlock x:Name="inactivityStopwatchTextBlock" FontSize="24" Margin="10" HorizontalAlignment="Center" Foreground="Green" Visibility="Collapsed"/>
-        <TextBlock x:Name="timerTextBlock" FontSize="48" Margin="10" HorizontalAlignment="Center"/>
+        <TextBlock x:Name="timerTextBlock" FontSize="64" Margin="10" HorizontalAlignment="Center"/>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Button x:Name="primaryButton" Margin="10" Click="PrimaryButton_Click">
-                <StackPanel Orientation="Vertical">
-                    <Image Source="Assets/ControlIcons/play_icon.png" Width="16" Height="16"/>
-                    <TextBlock x:Name="primaryButtonTextBlock" Text="Start Timer" Margin="5,0,0,0"/>
-                </StackPanel>
+            <Button x:Name="primaryButton" Click="PrimaryButton_Click"  Width="64" Height="64" Margin="10">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Ellipse Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="1"/>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Button.Template>
+                <Image x:Name="playButtonImage" Source="Assets/ControlIcons/play_icon.png" Width="32" Height="32"/>
             </Button>
             <Button x:Name="stopButton" Click="StopButton_Click" IsEnabled="False" Width="64" Height="64" Margin="10">
                 <Button.Template>
