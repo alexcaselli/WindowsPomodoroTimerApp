@@ -5,43 +5,71 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:PomodoroTimerApp"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:media="using:Microsoft.UI.Xaml.Media"
     mc:Ignorable="d"
     Title="PomodoroTimerApp">
 
     <Window.SystemBackdrop>
         <MicaBackdrop/>
     </Window.SystemBackdrop>
+    <!--<Window.SystemBackdrop>
+        <DesktopAcrylicBackdrop/>
+    </Window.SystemBackdrop> -->
+    <Page >
+        <Page.Resources>
+            <ResourceDictionary>
+                <ResourceDictionary.ThemeDictionaries>
+                    <ResourceDictionary x:Key="Default">
+                        <media:AcrylicBrush x:Key="CustomAcrylicBrush" TintOpacity="0.1" TintLuminosityOpacity="0.1" TintColor="#FFFF0000"/>
+                    </ResourceDictionary>
+                </ResourceDictionary.ThemeDictionaries>
+            </ResourceDictionary>
+        </Page.Resources>
+        <Grid HorizontalAlignment="Center">
 
-    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <TextBlock x:Name="debugTextBlock" FontSize="18" Margin="10" HorizontalAlignment="Center" Foreground="Red" Visibility="Collapsed"/>
-        <TextBlock x:Name="inactivityStopwatchTextBlock" FontSize="24" Margin="10" HorizontalAlignment="Center" Foreground="Green" Visibility="Collapsed"/>
-        <TextBlock x:Name="timerTextBlock" FontSize="64" Margin="10" HorizontalAlignment="Center"/>
+            
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <SelectorBar x:Name="SelectorBarTimer" SelectionChanged="SelectorBarTimer_SelectionChanged">
+                    <SelectorBarItem x:Name="SelectorBarItemWorkTimer" Text="Work" Icon="Clock" IsSelected="True"/>
+                    <SelectorBarItem x:Name="SelectorBarItemBreakTimer" Text="Break" Icon="Emoji2" />
+                </SelectorBar>
+                <TextBlock x:Name="debugTextBlock" FontSize="18" Margin="10" HorizontalAlignment="Center" Foreground="Red" Visibility="Collapsed"/>
+                <TextBlock x:Name="inactivityStopwatchTextBlock" FontSize="24" Margin="10" HorizontalAlignment="Center" Foreground="Green" Visibility="Collapsed"/>
+                <TextBlock x:Name="timerTextBlock" FontSize="64" Margin="10" HorizontalAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Button x:Name="primaryButton" Click="PrimaryButton_Click"  Width="64" Height="64" Margin="10">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Grid>
+                                    <Ellipse Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="1"/>
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Grid>
+                            </ControlTemplate>
+                        </Button.Template>
+                        <ImageIcon x:Name="playButtonImage" Source="Assets/ControlIcons/play_icon.png" Width="32" Height="32"/>
+                    </Button>
+                    <Button x:Name="stopButton" Click="StopButton_Click" IsEnabled="False" Width="64" Height="64" Margin="10">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Grid>
+                                    <Ellipse Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="1"/>
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Grid>
+                            </ControlTemplate>
+                        </Button.Template>
+                        <ImageIcon x:Name="stopButtonImage" Source="Assets/ControlIcons/stop_icon__disabled.png" Width="32" Height="32"/>
+                    </Button>
+                </StackPanel>
+            </StackPanel>
 
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Button x:Name="primaryButton" Click="PrimaryButton_Click"  Width="64" Height="64" Margin="10">
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <Grid>
-                            <Ellipse Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="1"/>
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Grid>
-                    </ControlTemplate>
-                </Button.Template>
-                <Image x:Name="playButtonImage" Source="Assets/ControlIcons/play_icon.png" Width="32" Height="32"/>
-            </Button>
-            <Button x:Name="stopButton" Click="StopButton_Click" IsEnabled="False" Width="64" Height="64" Margin="10">
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <Grid>
-                            <Ellipse Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="1"/>
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Grid>
-                    </ControlTemplate>
-                </Button.Template>
-                <Image x:Name="stopButtonImage" Source="Assets/ControlIcons/stop_icon__disabled.png" Width="32" Height="32"/>
-            </Button>
 
-        </StackPanel>
-    </StackPanel>
+        </Grid>
+    </Page>
+
+    
+
+
+
 </Window>
+
+

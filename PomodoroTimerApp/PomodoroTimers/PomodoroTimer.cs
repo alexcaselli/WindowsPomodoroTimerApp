@@ -167,7 +167,7 @@ namespace PomodoroTimerApp.PomodoroTimers
 
             bitmapImage = new BitmapImage(iconUri);
 
-            _primaryButton.Content = new Image
+            _primaryButton.Content = new ImageIcon
             {
                 Source = bitmapImage,
                 Width = ButtonImageContentSize,
@@ -185,7 +185,7 @@ namespace PomodoroTimerApp.PomodoroTimers
             {
                 bitmapImage = new BitmapImage(StopIconDisabled);
             }
-            _stopButton.Content = new Image
+            _stopButton.Content = new ImageIcon
             {
                 Source = bitmapImage,
                 Width = ButtonImageContentSize,

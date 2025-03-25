@@ -27,6 +27,7 @@ using System.ComponentModel.Design;
 using PomodoroTimerApp.Managers;
 using System.IO;
 using Microsoft.UI.Composition.SystemBackdrops;
+using Windows.ApplicationModel.VoiceCommands;
 
 
 namespace PomodoroTimerApp
@@ -89,6 +90,47 @@ namespace PomodoroTimerApp
             _windowHelper.ExitFullScreen(this);
         }
 
+        private void SelectorBarTimer_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
+        {
+            SelectorBarItem selectedItem = sender.SelectedItem;
+            int currentSelectedIndex = sender.Items.IndexOf(selectedItem);
+
+            switch (currentSelectedIndex)
+            {
+                case 0:
+                    if (_currentTimer is WorkTimer)
+                    {
+                        // Do Nothing
+                    }
+                    else if (_currentTimer is BreakTimer)
+                    {
+                        _currentTimer.ClickStop();
+                        _userActivityPomodoroTimerManager.stopActivityStopwatch();
+                        inactivityStopwatchTextBlock.Visibility = Visibility.Collapsed;
+                        StartPomodoroTimer("Work");
+                    }
+                    break;
+                case 1:
+                    if (_currentTimer is WorkTimer)
+                    {
+                        _currentTimer.ClickStop();
+                        _userActivityPomodoroTimerManager.stopActivityStopwatch();
+                        inactivityStopwatchTextBlock.Visibility = Visibility.Collapsed;
+                        StartPomodoroTimer("Break");
+                    }
+                    else if (_currentTimer is BreakTimer)
+                    {
+                        // Do Nothing
+                    }
+                    break;
+                default:
+                    // Do Nothing
+                    break;
+            }
+
+
+        }
+
         private void OnTimerElapsed(object? sender, TimerCompletedEventArgs e)
         {
             if (e.TimerType == "Work")
@@ -99,6 +141,8 @@ namespace PomodoroTimerApp
                 Window _mainWindow = _windowHelper.LaunchAndBringToForegroundIfNeeded(this);
                 _windowHelper.EnterFullScreen(_mainWindow);
 
+                SelectorBarItemBreakTimer.IsSelected = true;
+
                 // Avvia il timer di pausa appropriato
                 StartPomodoroTimer("Break");
             }
@@ -106,6 +150,9 @@ namespace PomodoroTimerApp
             {
                 // Dopo una pausa, avvia un nuovo timer di lavoro
                 _windowHelper.ExitFullScreen(this);
+
+                SelectorBarItemWorkTimer.IsSelected = true;
+
                 StartPomodoroTimer("Work");
             }
         }
