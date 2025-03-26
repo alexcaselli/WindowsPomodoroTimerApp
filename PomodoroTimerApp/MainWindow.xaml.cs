@@ -40,9 +40,9 @@ namespace PomodoroTimerApp
         #region Campi e costanti
 
         // Costanti di configurazione
-        private const double WorkingTimerDurationMinutes = 25;
-        private const double BreakTimerDurationMinutes = 3;
-        private SizeInt32 WindowSize = new SizeInt32(720, 480);
+        private double WorkingTimerDurationMinutes;
+        private double BreakTimerDurationMinutes;
+        private SizeInt32 WindowSize = new SizeInt32(720, 560);
 
 
         private WindowHelper _windowHelper;
@@ -50,8 +50,6 @@ namespace PomodoroTimerApp
         private PomodoroTimer _currentTimer;
         private UserActivityPomodoroTimerManager _userActivityPomodoroTimerManager;
 
-        private MicaController micaController;
-        private SystemBackdropConfiguration backdropConfiguration;
 
 
         #endregion
@@ -59,8 +57,9 @@ namespace PomodoroTimerApp
         public MainWindow()
         {
             this.InitializeComponent();
-            //InitializeTimers(); ----------------------------------- UNCOMMENT THIS LINE
-            CoordinateTimers();
+            this.WorkingTimerDurationMinutes = 25;
+            this.BreakTimerDurationMinutes = 3;
+            InitializeWorkTimer();
             _windowHelper = new WindowHelper();
             //this.AppWindow.SetIcon("Assets/Square44x44Logo.targetsize-32.png");
             AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets\\Square44x44Logo.targetsize-32.png"));
@@ -68,13 +67,28 @@ namespace PomodoroTimerApp
             //this.AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
         }
 
-        private void CoordinateTimers()
+        private void InitializeWorkTimer()
         {
             // Inizializza i timer e lo stato iniziale.
             _currentTimer = new WorkTimer(WorkingTimerDurationMinutes, timerTextBlock, primaryButton, stopButton);
             _userActivityPomodoroTimerManager = new UserActivityWorkTimerManager(_currentTimer, inactivityStopwatchTextBlock);
             _currentTimer.TimerCompleted += OnTimerElapsed;
             
+        }
+        private void InitializeBreakTimer()
+        {
+            // Inizializza i timer e lo stato iniziale.
+            _currentTimer = new BreakTimer(BreakTimerDurationMinutes, timerTextBlock, primaryButton, stopButton);
+            _userActivityPomodoroTimerManager = new UserActivityBreakTimerManager(_currentTimer, inactivityStopwatchTextBlock);
+            _currentTimer.TimerCompleted += OnTimerElapsed;
+
+        }
+
+        private void StopAndResetTimer()
+        {
+            _currentTimer.ClickStop();
+            _userActivityPomodoroTimerManager.stopActivityStopwatch();
+            inactivityStopwatchTextBlock.Visibility = Visibility.Collapsed;
         }
 
         private void PrimaryButton_Click(object sender, RoutedEventArgs e)
@@ -89,6 +103,40 @@ namespace PomodoroTimerApp
             // Esce dalla modalità fullscreen se attivo
             _windowHelper.ExitFullScreen(this);
         }
+        private async void SettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            settingsContentDialog.XamlRoot = MainPage.XamlRoot;
+
+            ContentDialogResult result = await settingsContentDialog.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                StopAndResetTimer();
+                this.WorkingTimerDurationMinutes = NumberBoxWorkTimerDuration.Value;
+                this.BreakTimerDurationMinutes = NumberBoxBreakTimerDuration.Value;
+
+                if (_currentTimer is WorkTimer)
+                {
+                    InitializeWorkTimer();
+                }
+                else if (_currentTimer is BreakTimer)
+                {
+                    InitializeBreakTimer();
+                }
+            }
+            else
+            {
+                // User pressed Cancel, ESC, or the back arrow.
+                // Terms of use were not accepted.
+            }
+        }
+        private void SettingsContentDialog_Opened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        {
+            // Ensure that the check box is unchecked each time the dialog opens.
+            //ConfirmAgeCheckBox.IsChecked = false;
+            NumberBoxWorkTimerDuration.Value = WorkingTimerDurationMinutes;
+            NumberBoxBreakTimerDuration.Value = BreakTimerDurationMinutes;
+        }
+
 
         private void SelectorBarTimer_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
         {
@@ -104,19 +152,15 @@ namespace PomodoroTimerApp
                     }
                     else if (_currentTimer is BreakTimer)
                     {
-                        _currentTimer.ClickStop();
-                        _userActivityPomodoroTimerManager.stopActivityStopwatch();
-                        inactivityStopwatchTextBlock.Visibility = Visibility.Collapsed;
-                        StartPomodoroTimer("Work");
+                        StopAndResetTimer();
+                        InitializeWorkTimer();
                     }
                     break;
                 case 1:
                     if (_currentTimer is WorkTimer)
                     {
-                        _currentTimer.ClickStop();
-                        _userActivityPomodoroTimerManager.stopActivityStopwatch();
-                        inactivityStopwatchTextBlock.Visibility = Visibility.Collapsed;
-                        StartPomodoroTimer("Break");
+                        StopAndResetTimer();
+                        InitializeBreakTimer();
                     }
                     else if (_currentTimer is BreakTimer)
                     {
