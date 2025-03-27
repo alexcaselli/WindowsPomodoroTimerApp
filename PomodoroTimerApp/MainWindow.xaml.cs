@@ -28,6 +28,7 @@ using PomodoroTimerApp.Managers;
 using System.IO;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Windows.ApplicationModel.VoiceCommands;
+using Windows.Storage;
 
 
 namespace PomodoroTimerApp
@@ -40,12 +41,20 @@ namespace PomodoroTimerApp
         #region Campi e costanti
 
         // Costanti di configurazione
+        private const double Fallback_WorkingTimerDurationMinutes = 25;
+        private const double Fallback_BreakTimerDurationMinutes = 3;
+
+        private const string WorkingTimerDurationMinutes_CompositeKey = "WorkingTimerDurationMinutes";
+        private const string BreakTimerDurationMinutes_CompositeKey = "BreakTimerDurationMinutes";
+        private const string Timers_CompositeKey = "TimersDurationMinutes";
+
         private double WorkingTimerDurationMinutes;
         private double BreakTimerDurationMinutes;
         private SizeInt32 WindowSize = new SizeInt32(720, 560);
 
 
         private WindowHelper _windowHelper;
+        private ApplicationDataContainer _localConfig;
 
         private PomodoroTimer _currentTimer;
         private UserActivityPomodoroTimerManager _userActivityPomodoroTimerManager;
@@ -57,14 +66,55 @@ namespace PomodoroTimerApp
         public MainWindow()
         {
             this.InitializeComponent();
-            this.WorkingTimerDurationMinutes = 25;
-            this.BreakTimerDurationMinutes = 3;
+            _localConfig = ApplicationData.Current.LocalSettings;
+            ReadAndSetLocalConfigs();
+
             InitializeWorkTimer();
             _windowHelper = new WindowHelper();
             //this.AppWindow.SetIcon("Assets/Square44x44Logo.targetsize-32.png");
             AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets\\Square44x44Logo.targetsize-32.png"));
             AppWindow.Resize(WindowSize);
             //this.AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
+        }
+
+        private void ReadAndSetLocalConfigs()
+        {
+            try
+            {
+                ApplicationDataCompositeValue composite = (ApplicationDataCompositeValue)_localConfig.Values[Timers_CompositeKey];
+                if (composite != null)
+                {
+                    this.WorkingTimerDurationMinutes = (double)composite[WorkingTimerDurationMinutes_CompositeKey];
+                    this.BreakTimerDurationMinutes = (double)composite[BreakTimerDurationMinutes_CompositeKey];
+                }
+                else
+                {
+                    this.WorkingTimerDurationMinutes = Fallback_WorkingTimerDurationMinutes;
+                    this.BreakTimerDurationMinutes = Fallback_BreakTimerDurationMinutes;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception as needed, for example, log the error or show a message to the user
+                debugTextBlock.Text = "Error reading timer configurations: " + ex.Message;
+            }
+        }
+
+        private void WriteAndSetLocalConfigs(double New_WorkingTimerDurationMinutes, double New_BreakTimerDurationMinutes)
+        {
+            try
+            {
+                ApplicationDataCompositeValue composite = new ApplicationDataCompositeValue();
+
+                composite[WorkingTimerDurationMinutes_CompositeKey] = New_WorkingTimerDurationMinutes;
+                composite[BreakTimerDurationMinutes_CompositeKey] = New_BreakTimerDurationMinutes;
+                _localConfig.Values[Timers_CompositeKey] = composite;
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception as needed, for example, log the error or show a message to the user
+                debugTextBlock.Text = "Error saving timer configurations: " + ex.Message;
+            }
         }
 
         private void InitializeWorkTimer()
@@ -113,6 +163,8 @@ namespace PomodoroTimerApp
                 StopAndResetTimer();
                 this.WorkingTimerDurationMinutes = NumberBoxWorkTimerDuration.Value;
                 this.BreakTimerDurationMinutes = NumberBoxBreakTimerDuration.Value;
+
+                WriteAndSetLocalConfigs(NumberBoxWorkTimerDuration.Value, NumberBoxBreakTimerDuration.Value);
 
                 if (_currentTimer is WorkTimer)
                 {
