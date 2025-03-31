@@ -68,7 +68,7 @@ namespace PomodoroTimerApp
 
             InitializeWorkTimer();
             _windowHelper = new WindowHelper();
-            AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets\\Square44x44Logo.targetsize-32.png"));
+            AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets\\PomodoroTimerAppIcon.ico"));
             AppWindow.Resize(WindowSize);
         }
 
