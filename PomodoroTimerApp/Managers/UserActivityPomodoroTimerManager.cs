@@ -46,7 +46,7 @@ namespace PomodoroTimerApp.Managers
             
         }
 
-        protected void stopActivityStopwatch()
+        public void stopActivityStopwatch()
         {
             _inactivityStopwatchTimer.Stop();
 

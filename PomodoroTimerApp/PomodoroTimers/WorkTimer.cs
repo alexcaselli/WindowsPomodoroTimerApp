@@ -41,39 +41,7 @@ namespace PomodoroTimerApp.PomodoroTimers
         }
 
 
-        #region Notifiche Toast
-
-        /// <summary>
-        /// Mostra una notifica toast per informare l'utente che il timer è scaduto.
-        /// L'argomento "action=toastClick" verrà passato all'attivazione della notifica.
-        /// </summary>
-        private void ShowToastNotification()
-        {
-            try
-            {
-
-                // Crea il contenuto della notifica toast, includendo un parametro di attivazione.
-                var content = new ToastContentBuilder()
-                    .AddArgument("action", "openWindow")
-                    .SetToastScenario(ToastScenario.Reminder)
-                    .AddText("Pomodoro Timer")
-                    .AddText("Il timer di lavoro è scaduto! Clicca qui per avviare il break.")
-                    .GetToastContent();
-
-
-                // Crea la notifica e inviala
-                var toast = new ToastNotification(content.GetXml());
-
-                ToastNotificationManager.CreateToastNotifier().Show(toast);
-
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("DEBUG ------------- Toast Error: " + ex.Message);
-            }
-        }
-
-        #endregion
+    
     }
 
 }

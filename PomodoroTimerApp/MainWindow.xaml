@@ -5,18 +5,109 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:PomodoroTimerApp"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:media="using:Microsoft.UI.Xaml.Media"
     mc:Ignorable="d"
     Title="PomodoroTimerApp">
 
-    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <TextBlock x:Name="debugTextBlock" FontSize="18" Margin="10" HorizontalAlignment="Center" Foreground="Red" Visibility="Collapsed"/>
-        <TextBlock x:Name="inactivityStopwatchTextBlock" FontSize="24" Margin="10" HorizontalAlignment="Center" Foreground="Green" Visibility="Collapsed"/>
-        <TextBlock x:Name="timerTextBlock" FontSize="48" Margin="10" HorizontalAlignment="Center"/>
+    <Window.SystemBackdrop>
+        <MicaBackdrop/>
+    </Window.SystemBackdrop>
+    <Page x:Name="MainPage">
+        <Page.Resources>
+            <ResourceDictionary>
+                <ResourceDictionary.ThemeDictionaries>
+                    <ResourceDictionary x:Key="Default">
+                        <media:AcrylicBrush x:Key="CustomAcrylicBrush" TintOpacity="0.1" TintLuminosityOpacity="0.1" TintColor="#FFFF0000"/>
+                    </ResourceDictionary>
+                </ResourceDictionary.ThemeDictionaries>
+            </ResourceDictionary>
+        </Page.Resources>
 
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Button x:Name="primaryButton" Margin="10" Click="PrimaryButton_Click">Start Timer</Button>
-            <Button x:Name="stopButton" Content="Stop Timer" Click="StopButton_Click" IsEnabled="False"/>
-        </StackPanel>
-    </StackPanel>
+        <Grid>
+
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <SelectorBar x:Name="SelectorBarTimer" SelectionChanged="SelectorBarTimer_SelectionChanged">
+                    <SelectorBarItem x:Name="SelectorBarItemWorkTimer" Text="Work" IsSelected="True">
+                        <SelectorBarItem.Icon>
+                            <FontIcon Glyph="&#xE770;"/>
+                        </SelectorBarItem.Icon>
+                    </SelectorBarItem>
+                    <SelectorBarItem x:Name="SelectorBarItemBreakTimer" Text="Break" Icon="Emoji2" />
+                </SelectorBar>
+                <TextBlock x:Name="debugTextBlock" FontSize="18" Margin="10" HorizontalAlignment="Center" Foreground="Red" Visibility="Collapsed"/>
+                <TextBlock x:Name="inactivityStopwatchTextBlock" FontSize="24" Margin="10" HorizontalAlignment="Center" Foreground="LightGreen" Visibility="Collapsed"/>
+                <TextBlock x:Name="timerTextBlock" FontSize="64" Margin="0" HorizontalAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
+                    <Button x:Name="primaryButton" Click="PrimaryButton_Click"  Width="64" Height="64" Margin="10">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Grid>
+                                    <Ellipse Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="1"/>
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Grid>
+                            </ControlTemplate>
+                        </Button.Template>
+                        <ImageIcon x:Name="playButtonImage" Source="Assets/ControlIcons/play_icon.png" Width="32" Height="32"/>
+                    </Button>
+                    <Button x:Name="stopButton" Click="StopButton_Click" IsEnabled="False" Width="64" Height="64" Margin="10">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Grid>
+                                    <Ellipse Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="1"/>
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Grid>
+                            </ControlTemplate>
+                        </Button.Template>
+                        <ImageIcon x:Name="stopButtonImage" Source="Assets/ControlIcons/stop_icon__disabled.png" Width="32" Height="32"/>
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+
+            <Button x:Name="settingsButton"
+                    Click="SettingsButton_Click"
+                    Margin="0,10,10,0"  HorizontalAlignment="Right"
+                    VerticalAlignment="Top">
+                <SymbolIcon Symbol="Setting"/>
+            </Button>
+
+            <ContentDialog x:Name="settingsContentDialog"
+                           PrimaryButtonText="Save" IsPrimaryButtonEnabled="True"
+                           CloseButtonText="Cancel" DefaultButton="Primary"
+                           Opened="SettingsContentDialog_Opened">
+                <ContentDialog.TitleTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Margin="10">
+                            <SymbolIcon Symbol="Setting" Width="40" Height="40" VerticalAlignment="Center" />
+                            <TextBlock Text="Settings" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ContentDialog.TitleTemplate>
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel>
+                        <FontIcon Glyph="&#xE770;"/>
+                        <NumberBox
+                            x:Name="NumberBoxWorkTimerDuration"
+                            Header="Work Timer Duration (minutes):"
+                            Value="25"
+                            SpinButtonPlacementMode="Compact"
+                            SmallChange="5"
+                            LargeChange="10"
+                            Margin="10"/>
+                    </StackPanel>
+                    <StackPanel>
+                        <SymbolIcon Symbol="Emoji2"/>
+                        <NumberBox
+                            x:Name="NumberBoxBreakTimerDuration"
+                            Header="Break Timer Duration (minutes):"
+                            Value="3"
+                            SpinButtonPlacementMode="Compact"
+                            SmallChange="1"
+                            LargeChange="5"
+                            Margin="10"/>
+                    </StackPanel>
+                </StackPanel>
+            </ContentDialog>
+        </Grid>
+
+    </Page>
 </Window>

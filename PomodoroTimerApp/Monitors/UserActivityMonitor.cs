@@ -15,7 +15,7 @@ namespace PomodoroTimerApp.Monitors
 
             TimeSpan _inactivityDuration = GetInactivityDuration();
 
-            Debug.WriteLine("Inactivity duration: " + _inactivityDuration);
+            //Debug.WriteLine("Inactivity duration: " + _inactivityDuration);
 
             if (_inactivityDuration > BreakActivityThreshold)
             {

@@ -11,6 +11,7 @@ using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Controls;
 using PomodoroTimerApp.Helpers;
 using PomodoroTimerApp.PomodoroTimers.Events;
+using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace PomodoroTimerApp.PomodoroTimers
 {
@@ -31,9 +32,11 @@ namespace PomodoroTimerApp.PomodoroTimers
         protected const string ZeroTime = "00:00";
         protected Button _primaryButton;
         protected Button _stopButton;
-        protected const string ButtonContent_Resume = "Resume Timer";
-        protected const string ButtonContent_Start = "Start Timer";
-        protected const string ButtonContent_Pause = "Pause Timer";
+        protected const int ButtonImageContentSize = 32;
+        protected Uri StopIcon = new Uri("ms-appx:///Assets/ControlIcons/stop_icon.png");
+        protected Uri StopIconDisabled = new Uri("ms-appx:///Assets/ControlIcons/stop_icon__disabled.png");
+        protected Uri PlayIcon = new Uri("ms-appx:///Assets/ControlIcons/play_icon.png");
+        protected Uri PauseIcon = new Uri("ms-appx:///Assets/ControlIcons/pause_icon.png");
         protected DispatcherQueue _dispatcherQueue;
 
         // Events
@@ -62,12 +65,13 @@ namespace PomodoroTimerApp.PomodoroTimers
             _state = state;
         }
 
-        public void Init() {
-
+        public void Init()
+        {
             _remainingTime = TimeSpan.FromMinutes(_timerDurationMinutes);
             _timerTextBlock.Text = _remainingTime.ToString(TimerFormat);
-            _primaryButton.Content = ButtonContent_Start;
+            SetPrimaryButtonImage(PlayIcon);
             _stopButton.IsEnabled = false;
+            SetStopButtonImage(_stopButton.IsEnabled);
 
         }
 
@@ -102,7 +106,7 @@ namespace PomodoroTimerApp.PomodoroTimers
             _remainingTime = _endTime - DateTime.Now;
             _dispatcherQueue.TryEnqueue(() =>
             {
-                _primaryButton.Content = ButtonContent_Resume;
+                SetPrimaryButtonImage(PlayIcon);
             });
         }
         public void Resume()
@@ -120,8 +124,10 @@ namespace PomodoroTimerApp.PomodoroTimers
             _timer.Start();
             _dispatcherQueue.TryEnqueue(() =>
             {
-                _primaryButton.Content = ButtonContent_Pause;
+                SetPrimaryButtonImage(PauseIcon);
                 _stopButton.IsEnabled = true;
+                SetStopButtonImage(_stopButton.IsEnabled);
+
             });
             
             //StartActivityTracker();
@@ -153,6 +159,38 @@ namespace PomodoroTimerApp.PomodoroTimers
         protected virtual void OnTimerCompleted(TimerCompletedEventArgs e)
         {
             TimerCompleted?.Invoke(this, e);
+        }
+        private void SetPrimaryButtonImage(Uri iconUri)
+        {
+            BitmapImage bitmapImage;
+
+
+            bitmapImage = new BitmapImage(iconUri);
+
+            _primaryButton.Content = new ImageIcon
+            {
+                Source = bitmapImage,
+                Width = ButtonImageContentSize,
+                Height = ButtonImageContentSize
+            };
+        }
+        private void SetStopButtonImage(bool enabled)
+        {
+            BitmapImage bitmapImage;
+            
+            if (enabled)
+            {
+                bitmapImage = new BitmapImage(StopIcon);
+            } else
+            {
+                bitmapImage = new BitmapImage(StopIconDisabled);
+            }
+            _stopButton.Content = new ImageIcon
+            {
+                Source = bitmapImage,
+                Width = ButtonImageContentSize,
+                Height = ButtonImageContentSize
+            };
         }
 
 
