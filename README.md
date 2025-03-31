@@ -2,14 +2,16 @@
 
 ## Overview
 
-The Pomodoro Timer App is a productivity tool designed to help users manage their time effectively using the Pomodoro Technique. This technique involves breaking work into intervals, traditionally 25 minutes in length, separated by short breaks. This app is built using .NET 8 and targets Windows platforms.
+The Pomodoro Timer App is a productivity tool designed to help users manage their time effectively using the Pomodoro Technique. This technique involves breaking work into intervals, traditionally 25 minutes in length, separated by short breaks. This app is built using WinUI 3 and targets Windows platforms.
 
 ## Features
 
 * **Pomodoro Timer:** Set and manage work intervals and breaks.
+* **User Activity Monitoring:** Timers auto-pause and resume based on the user activity status.
+* **Unignorable Breaks:** No more breaks skipping. The app goes into fullscreen mode when you need a break.
 * **Customizable Intervals:** Adjust the length of work sessions and breaks to fit your needs.
 * **Notifications:** Receive notifications when it's time to take a break or start a new work session.
-* **User Interface:** Intuitive and user-friendly interface built with WinUI.
+* **User Interface:** Intuitive and user-friendly interface built with WinUI 3.
 * **MSIX Packaging:** Easy installation and updates through MSIX packaging.
 * **Multi-Platform Support:** Supports x86, x64, and ARM64 architectures.
 
@@ -27,12 +29,11 @@ The project is structured as follows:
 
 The project is configured to build and publish using the following settings:
 
-* **Target Framework:** .NET 8.0
+* **Target Framework:** C# .NET 8.0
 * **Output Type:** Windows Executable (WinExe)
 * **Platforms:** x86, x64, ARM64
 * **Runtime Identifiers:** `win-x86`, `win-x64`, `win-arm64`
 * **MSIX Tooling:** Enabled for easy packaging and publishing.
-* **Nullable Reference Types:** Enabled for better null safety.
 
 ## Dependencies
 
@@ -60,7 +61,7 @@ Contributions are welcome! Please fork the repository and submit a pull request 
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE). See the `LICENSE` file for more details.
+This project is licensed under the [MIT License](LICENSE).
 
 ## Contact
 
